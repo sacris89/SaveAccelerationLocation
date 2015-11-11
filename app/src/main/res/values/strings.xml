@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">MetricService</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="telematics">Telematics 2.0</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="play_services_available">Play services available</string>
+</resources>
