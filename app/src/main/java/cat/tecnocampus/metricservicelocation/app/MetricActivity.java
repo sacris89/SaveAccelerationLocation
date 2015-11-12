@@ -9,11 +9,13 @@ import android.view.MenuItem;
 import android.view.View;
 
 public class MetricActivity extends Activity {
+	private static boolean serviceStarted;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_metric);		
+		setContentView(R.layout.activity_metric);
+
 	}
 
 	@Override
@@ -34,7 +36,7 @@ public class MetricActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
+
 	public void startService(View view) {
 		Log.i("[Activity]", "going to START service");	
 		Intent intent = new Intent(this, GforceService.class);
@@ -51,5 +53,5 @@ public class MetricActivity extends Activity {
 		//bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 		stopService(intent);
 	}
-	
+
 }

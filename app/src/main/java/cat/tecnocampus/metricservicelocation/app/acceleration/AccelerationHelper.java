@@ -20,25 +20,20 @@ public class AccelerationHelper {
 		
 		@Override
 		public void onSensorChanged(SensorEvent event) {
-			// TODO Auto-generated method stub
 			if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
 				xAxis_lateral = event.values[0];
 				yAxis_longitudinal = event.values[1];
 				zAxis_vertical = event.values[2];
 				timeStamp = event.timestamp;
-				
 			
 				acceleration = Math.round(Math.sqrt(Math.pow(xAxis_lateral, 2) + Math.pow(yAxis_longitudinal,2) + Math.pow(zAxis_vertical, 2))) - SensorManager.STANDARD_GRAVITY;
 				
 			}
-			
 		}
-
 		
 		@Override
 		public void onAccuracyChanged(Sensor sensor, int accuracy) {
-			// TODO Auto-generated method stub
-			
+
 		}
 	};
 	

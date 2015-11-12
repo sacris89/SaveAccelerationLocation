@@ -34,9 +34,6 @@ public class GforceService extends Service {
 	private LocationHelper locationHelper;
 	private AccelerationHelper accelerationHelper;
 	
-	private final int mId = 7;
-	
-
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -52,26 +49,55 @@ public class GforceService extends Service {
 
 		Log.i("[Service]", "in onCreate the service ");	
 	}
-	
-	
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
-		wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
-		        "MyWakelockTag");
-		wakeLock.acquire();
-		
+
+        Log.i("[Service]", "in onStartCommand  service ");
+
+        avoidDeviceToSleep();
+
 		startForeground(FOREGROUND_ID, buildForegroundNotification());
 
-		Log.i("[Service]", "in onStart  service ");			
-		
+		startLocationAwarness();
+
+		startAccelerationAwarness();
+
+		initializeFileWriting();
+
+		writeValuesToFileAtFixedRate();
+
+		return Service.START_STICKY;
+	}
+
+    private void avoidDeviceToSleep() {
+        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
+                "MyWakelockTag");
+        wakeLock.acquire();
+    }
+
+    private void writeValuesToFileAtFixedRate() {
+		updateTimer = new Timer("uiUpdate");
+		updateTimer.scheduleAtFixedRate(new TimerTask() {
+			public void run() {
+				writeFile();
+			}
+		}, 0, 1000);
+	}
+
+	private void startLocationAwarness() {
 		locationHelper = new LocationHelper(this);
 		locationHelper.initLocationService();
 		locationHelper.connect();
-		//while (!locationHelper.connected()) {}
-		
-		
+	}
+
+	private void startAccelerationAwarness() {
+		accelerationHelper = new AccelerationHelper(this);
+		accelerationHelper.start();
+	}
+
+	private void initializeFileWriting() {
 		//open file
 		try {
 			file = new File(Environment.getExternalStorageDirectory(), "data.csv");
@@ -81,19 +107,6 @@ public class GforceService extends Service {
 		catch (Exception e) {
 			Log.i("[Service]","file exception " + e);
 		}
-
-		accelerationHelper = new AccelerationHelper(this);
-		accelerationHelper.start();
-	
-		updateTimer = new Timer("uiUpdate");
-		updateTimer.scheduleAtFixedRate(new TimerTask() {
-			public void run() {
-				writeFile();
-			}
-		}, 0, 100);
-		
-				
-		return Service.START_NOT_STICKY;
 	}
 
 	@Override
@@ -116,8 +129,6 @@ public class GforceService extends Service {
 		super.onDestroy();
 	}
 
-
-		
 	private void writeFile() {
 		String values;
 		
